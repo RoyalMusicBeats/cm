@@ -35,7 +35,7 @@ node {
                 /* Remove the started image */
 
                 container.stop()
-                container.remove()
+                container.remove(force: true)
             }
         }
     }
