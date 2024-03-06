@@ -1,5 +1,6 @@
 node {
     def app
+    def runningContainer
 
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
@@ -14,19 +15,27 @@ node {
         app = docker.build("ssh/ssh")
     }
 
-
     stage('Start image') {
         /* Start the Docker container using the built image */
-    
-        docker.image("ssh/ssh").run()
+
+        runningContainer = docker.image("ssh/ssh").run()
+    }
+
+    stage('Multi-Approval to Prod') {
+        /* This stage requires multiple manual approvals before deploying to production */
+
+        parallel (
+            "Approval 1": {
+                input "Approve deployment to production?"
+                runningContainer.stop()
+            },
+            "Approval 2": {
+                input "Approve deployment to production?"
+            }
+        )
     }
 
 
-    stage('Approval to Prod') {
-        /* This stage requires manual approval before deploying to production */
-
-        input "Deploy to production?"
-    }
 
     stage('Push image to prod registry') {
         /* Finally, we'll push the image with two tags:
