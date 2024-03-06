@@ -23,7 +23,13 @@ node {
         }
     }
 
-    stage('Push image') {
+    stage('Approval to Prod') {
+        /* This stage requires manual approval before deploying to production */
+
+        input "Deploy to production?"
+    }
+
+    stage('Push image to prod registry') {
         /* Finally, we'll push the image with two tags:
          * First, the incremental build number from Jenkins
          * Second, the 'latest' tag.
