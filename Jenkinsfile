@@ -14,38 +14,13 @@ node {
         app = docker.build("ssh/ssh")
     }
 
+
     stage('Start image') {
-        /* Start the image and wait for approval */
-
-        def container = app.run()
-        input "Approve to proceed?"
-        if (input == "Proceed") {
-            stage('Push image to prod registry') {
-                /* Finally, we'll push the image with two tags:
-                 * First, the incremental build number from Jenkins
-                 * Second, the 'latest' tag.
-                 * Pushing multiple tags is cheap, as all the layers are reused. */
-                docker.withRegistry('https://cm-prod-boz-001.tail118e1.ts.net') {
-                    app.push("${env.BUILD_NUMBER}")
-                    app.push("latest")
-                }
-            }
-            stage('Stop and remove image') {
-                /* Stop and remove the started image */
-
-                container.stop()
-                container.remove(force: true)
-            }
-        } else {
-            stage('Stop and remove image') {
-                /* Stop and remove the started image */
-
-                container.stop()
-                container.remove(force: true)
-            }
-            error("Deployment aborted by user.")
-        }
+        /* Start the Docker container using the built image */
+    
+        docker.image("ssh/ssh").run()
     }
+
 
     stage('Approval to Prod') {
         /* This stage requires manual approval before deploying to production */
