@@ -14,12 +14,28 @@ node {
         app = docker.build("ssh/ssh")
     }
 
-    stage('Test image') {
-        /* Ideally, we would run a test framework against our image.
-         * For this example, we're using a Volkswagen-type approach ;-) */
-
-        app.inside {
-            sh 'echo "Tests passed"'
+    stage('Start image') {
+        /* Start the image and wait for approval */
+    
+        def imageId = app.start()
+        input "Approve to proceed?"
+        if (input == "Proceed") {
+            stage('Push image to prod registry') {
+                /* Finally, we'll push the image with two tags:
+                 * First, the incremental build number from Jenkins
+                 * Second, the 'latest' tag.
+                 * Pushing multiple tags is cheap, as all the layers are reused. */
+                docker.withRegistry('https://cm-prod-boz-001.tail118e1.ts.net') {
+                    app.push("${env.BUILD_NUMBER}")
+                    app.push("latest")
+                }
+            }
+        } else {
+            stage('Remove started image') {
+                /* Remove the started image */
+    
+                app.remove(imageId)
+            }
         }
     }
 
