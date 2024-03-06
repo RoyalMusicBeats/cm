@@ -28,8 +28,8 @@ node {
 
     stage('Stop image') {
         /* Stop the Docker container using the built image */
-    
-        docker.image("ssh/ssh").stop()
+
+        app.stop()
     }
 
 
