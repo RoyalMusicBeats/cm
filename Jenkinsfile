@@ -26,12 +26,18 @@ node {
         input "Deploy to production?"
     }
 
+    stage('Stop image') {
+        /* Stop the Docker container using the built image */
+    
+        docker.image("ssh/ssh").stop()
+    }
+
+
     stage('Push image to prod registry') {
         /* Finally, we'll push the image with two tags:
          * First, the incremental build number from Jenkins
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
-        docker.image("ssh/ssh").stop()
         docker.withRegistry('https://cm-prod-boz-001.tail118e1.ts.net') {
             app.push("${env.BUILD_NUMBER}")
             app.push("latest")
