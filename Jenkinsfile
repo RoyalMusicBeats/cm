@@ -16,8 +16,8 @@ node {
 
     stage('Start image') {
         /* Start the image and wait for approval */
-    
-        def imageId = app.start()
+
+        def container = app.run()
         input "Approve to proceed?"
         if (input == "Proceed") {
             stage('Push image to prod registry') {
@@ -33,8 +33,9 @@ node {
         } else {
             stage('Remove started image') {
                 /* Remove the started image */
-    
-                app.remove(imageId)
+
+                container.stop()
+                container.remove()
             }
         }
     }
