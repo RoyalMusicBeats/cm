@@ -30,13 +30,20 @@ node {
                     app.push("latest")
                 }
             }
-        } else {
-            stage('Remove started image') {
-                /* Remove the started image */
+            stage('Stop and remove image') {
+                /* Stop and remove the started image */
 
                 container.stop()
                 container.remove(force: true)
             }
+        } else {
+            stage('Stop and remove image') {
+                /* Stop and remove the started image */
+
+                container.stop()
+                container.remove(force: true)
+            }
+            error("Deployment aborted by user.")
         }
     }
 
