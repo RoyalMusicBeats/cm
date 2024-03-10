@@ -39,6 +39,16 @@ node {
 
     stage('Deploy to Prod') {
         /* This stage deploys to production if approved, otherwise executes docker-compose down */
+        input "Deploy to production?"
+        if (currentBuild.result == 'ABORTED') {
+            sh 'docker-compose down'
+        } else {
+            // Continue with deployment steps
+        }
+    }
+
+    stage('Deploy to Prod') {
+        /* This stage deploys to production if approved, otherwise executes docker-compose down */
 
         if (currentBuild.result == 'ABORTED') {
             sh 'docker-compose down'
