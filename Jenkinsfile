@@ -15,34 +15,26 @@ node {
     }
 
     stage('Create docker-compose file') {
-        /* This stage creates a script */
-    
-        sh 'echo cat <<EOF > docker-compose.yml'
-        sh 'echo version: '3''
-        sh 'echo services:'
-        sh 'echo   ssh:'
-        sh 'echo     image: ssh:latest'
-        sh 'echo     container_name: ssh'
-        sh 'echo     hostname: ssh'
-        sh 'echo     ports:'
-        sh 'echo       - 2222:2222'
-        sh 'echo     networks:'
-        sh 'echo       backend:'
-        sh 'echo         ipv4_address: 10.6.0.4'
-        sh 'echo     volumes:'
-        sh 'echo       - /mnt/docker/ssh_cm-home:/root/cm'
-        sh 'echo     environment:'
-        sh 'echo       - TZ=Europe/Amsterdam'
-        sh 'echo EOF'
-        sh 'touch docker-compose.sh'
-        sh 'echo "Script created!"'
+        /* This stage creates the docker-compose file */
+        
+        sh 'echo "version: \'3\'" > docker-compose.yml'
+        sh 'echo "services:" >> docker-compose.yml'
+        sh 'echo "  app:" >> docker-compose.yml'
+        sh 'echo "    image: ssh/ssh" >> docker-compose.yml'
+        sh 'echo "    container_name: ssh" >> docker-compose.yml'
+        sh 'echo "    hostname: ssh" >> docker-compose.yml'
+        sh 'echo "    ports:" >> docker-compose.yml'
+        sh 'echo "      - 2222:2222" >> docker-compose.yml'
+        sh 'echo "    volumes:" >> docker-compose.yml'
+        sh 'echo "      - /mnt/docker/ssh_cm-home:/root/cm" >> docker-compose.yml'
+        sh 'echo "    environment:" >> docker-compose.yml'
+        sh 'echo "      - TZ=Europe/Amsterdam" >> docker-compose.yml'
     }
 
-    stage('Execute script') {
-        /* This stage executes a script */
-    
-        sh 'chmod +x ./docker-compose.sh' // Give execute permission to the script file
-        sh './docker-compose.sh' // Modify the command to include the correct file path
+    stage('Execute docker-compose') {
+        /* This stage executes the docker-compose file */
+
+        sh 'docker-compose up -d'
     }
 
     stage('Approval to Prod') {
