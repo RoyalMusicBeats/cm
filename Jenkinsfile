@@ -31,30 +31,28 @@ node {
         sh 'echo "      - TZ=Europe/Amsterdam" >> docker-compose.yml'
     }
 
-    stage('Execute docker-compose') {
+    stage('Execute docker-compose up') {
         /* This stage executes the docker-compose file */
 
         sh 'docker-compose up -d'
     }
 
-    stage('Deploy to Prod') {
-        /* This stage deploys to production if approved, otherwise executes docker-compose down */
-        input "Deploy to production?"
-        if (currentBuild.result == 'ABORTED') {
-            sh 'docker-compose down'
-        } else {
-            // Continue with deployment steps
-        }
+    stage('Testing') {
+        /* This stage requires manual approval before deploying to production */
+
+        input "Testing done?"
     }
 
-    stage('Deploy to Prod') {
-        /* This stage deploys to production if approved, otherwise executes docker-compose down */
+    stage('Execute docker-compose down') {
+        /* This stage executes the docker-compose file */
 
-        if (currentBuild.result == 'ABORTED') {
-            sh 'docker-compose down'
-        } else {
-            // Continue with deployment steps
-        }
+        sh 'docker-compose down'
+    }
+
+    stage('Approval to Prod') {
+        /* This stage requires manual approval before deploying to production */
+
+        input "Deploy to production?"
     }
 
     stage('Push image to prod registry') {
