@@ -14,10 +14,18 @@ node {
         app = docker.build("ssh/ssh")
     }
 
-    stage('Start image') {
-        /* Start the Docker container using the built image */
+    stage('Create scripts') {
+        /* This stage creates a script */
+    
+        sh 'echo "Creating script..."'
+        sh 'touch your_script.sh'
+        sh 'echo "Script created!"'
+    }
 
-        docker.image("ssh/ssh").run()
+    stage('Execute script') {
+        /* This stage executes a script */
+    
+        sh 'your_script.sh'
     }
 
     stage('Approval to Prod') {
@@ -25,13 +33,6 @@ node {
 
         input "Deploy to production?"
     }
-
-    stage('Stop image') {
-        /* Stop the Docker container using the built image */
-
-        docker.image("ssh/ssh").stopContainer()
-    }
-
 
     stage('Push image to prod registry') {
         /* Finally, we'll push the image with two tags:
