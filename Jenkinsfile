@@ -25,7 +25,7 @@ node {
     stage('Execute script') {
         /* This stage executes a script */
     
-        sh 'your_script.sh'
+        sh './your_script.sh' // Modify the command to include the file path
     }
 
     stage('Approval to Prod') {
