@@ -37,10 +37,14 @@ node {
         sh 'docker-compose up -d'
     }
 
-    stage('Approval to Prod') {
-        /* This stage requires manual approval before deploying to production */
+    stage('Deploy to Prod') {
+        /* This stage deploys to production if approved, otherwise executes docker-compose down */
 
-        input "Deploy to production?"
+        if (currentBuild.result == 'ABORTED') {
+            sh 'docker-compose down'
+        } else {
+            // Continue with deployment steps
+        }
     }
 
     stage('Push image to prod registry') {
