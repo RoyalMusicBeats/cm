@@ -25,7 +25,8 @@ node {
     stage('Execute script') {
         /* This stage executes a script */
     
-        sh './your_script.sh' // Modify the command to include the file path
+        sh 'chmod +x ./your_script.sh' // Give execute permission to the script file
+        sh './your_script.sh' // Modify the command to include the correct file path
     }
 
     stage('Approval to Prod') {
