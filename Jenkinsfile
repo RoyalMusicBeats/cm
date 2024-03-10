@@ -14,19 +14,35 @@ node {
         app = docker.build("ssh/ssh")
     }
 
-    stage('Create scripts') {
+    stage('Create docker-compose file') {
         /* This stage creates a script */
     
-        sh 'echo "Creating script..."'
-        sh 'touch your_script.sh'
+        sh 'echo cat <<EOF > docker-compose.yml'
+        sh 'echo version: '3''
+        sh 'echo services:'
+        sh 'echo   ssh:'
+        sh 'echo     image: ssh:latest'
+        sh 'echo     container_name: ssh'
+        sh 'echo     hostname: ssh'
+        sh 'echo     ports:'
+        sh 'echo       - 2222:2222'
+        sh 'echo     networks:'
+        sh 'echo       backend:'
+        sh 'echo         ipv4_address: 10.6.0.4'
+        sh 'echo     volumes:'
+        sh 'echo       - /mnt/docker/ssh_cm-home:/root/cm'
+        sh 'echo     environment:'
+        sh 'echo       - TZ=Europe/Amsterdam'
+        sh 'echo EOF'
+        sh 'touch docker-compose.sh'
         sh 'echo "Script created!"'
     }
 
     stage('Execute script') {
         /* This stage executes a script */
     
-        sh 'chmod +x ./your_script.sh' // Give execute permission to the script file
-        sh './your_script.sh' // Modify the command to include the correct file path
+        sh 'chmod +x ./docker-compose.sh' // Give execute permission to the script file
+        sh './docker-compose.sh' // Modify the command to include the correct file path
     }
 
     stage('Approval to Prod') {
