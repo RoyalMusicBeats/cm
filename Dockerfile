@@ -2,7 +2,7 @@
 FROM alpine:latest
 
 # Install SSH and IPUtils-Ping packages
-RUN apk update && apk add openssh iputils nano openrc tzdata ansible terraform openjdk21 git
+RUN apk update && apk add openssh iputils nano openrc tzdata ansible openjdk21 git
 
 # Set the timezone to Europe/Amsterdam
 ENV TZ=Europe/Amsterdam
