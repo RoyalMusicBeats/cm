@@ -11,15 +11,19 @@ autoinstall:
   packages:
     - vim
   late-commands:
-    - curtin in-target -- apt update
-    - curtin in-target -- apt-get install wget gpg
-    - curtin in-target -- wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-    - curtin in-target -- install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-    - curtin in-target -- echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
-    - curtin in-target -- rm -f packages.microsoft.gpg
-    - curtin in-target -- curl -sS https://download.spotify.com/debian/pubkey_6224F9941A8AA6D1.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
-    - curtin in-target -- echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
-    - curtin in-target -- echo "deb https://apt.enpass.io/  stable main" | sudo tee /etc/apt/sources.list.d/enpass.list
-    - curtin in-target -- wget -O - https://apt.enpass.io/keys/enpass-linux.key | sudo tee /etc/apt/trusted.gpg.d/enpass.asc
-    - curtin in-target -- apt update
-    - curtin in-target -- apt install -y spotify-client code enpass
+    - curtin in-target --target=/target -- apt-get --purge -y --quiet=2 remove apport bcache-tools btrfs-progs byobu cloud-guest-utils cloud-initramfs-copymods cloud-initramfs-dyn-netconf friendly-recovery fwupd landscape-common lxd-agent-loader ntfs-3g open-vm-tools plymouth plymouth-theme-ubuntu-text popularity-contest screen snapd sosreport tmux ufw
+    - curtin in-target --target=/target -- apt-get -qq update
+    - curtin in-target --target=/target -- apt-get -y install wget gnupg
+    - wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+    - install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+    - echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+    - rm -f packages.microsoft.gpg
+    - curl -sS https://download.spotify.com/debian/pubkey_6224F9941A8AA6D1.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
+    - echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+    - echo "deb https://apt.enpass.io/  stable main" | sudo tee /etc/apt/sources.list.d/enpass.list
+    - wget -O - https://apt.enpass.io/keys/enpass-linux.key | sudo tee /etc/apt/trusted.gpg.d/enpass.asc
+    - curtin in-target --target=/target -- apt-get -qq update
+    - curtin in-target --target=/target -- apt-get -y install spotify-client code enpass
+    - curtin in-target --target=/target -- apt-get -qq update
+    - curtin in-target --target=/target -- apt-get -y dist-upgrade
+    - curtin in-target --target=/target -- apt-get --purge -y --quiet=2 autoremove
